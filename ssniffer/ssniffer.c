@@ -35,6 +35,7 @@
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <time.h>
 
 // color defines
 #define BLACK 0
@@ -404,16 +405,31 @@ static void updatectrl(const int hardware, const int virtual,
   }
 }
 
+
+time_t rawTime;
+struct tm * timeInfo;
+char buffer [80];
+
+
+
 static void printformated(const char *portname, const unsigned char *buff,
                           const int size, const int color) {
+
+    time(&rawTime);
+    timeInfo = localtime(&rawTime);
+    
   if (!size)
     return;
 
   int ptr = 0;
   int n;
   do {
+ 		strftime (buffer,80,"%F %R:%S",timeInfo);
+ 		printf("[%s]",  buffer);
+   	
     if (mode_color)
       ANSI_FG_HCOLOR(color);
+
     printf("%15s: ", portname);
     if (mode_color)
       ANSI_DEFAULT();
